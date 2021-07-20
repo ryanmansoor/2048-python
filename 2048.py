@@ -57,7 +57,7 @@ def spawn(board):
         GAME_FINISHED = True
         return
     free_spot = random_num % len(free_spots)
-    board[free_spots[free_spot][0]][free_spots[free_spot][1]] = 1
+    board[free_spots[free_spot][0]][free_spots[free_spot][1]] = 2
 
 
 def handle_right(board):
@@ -68,7 +68,7 @@ def handle_right(board):
             # If the neighour to the left is 0, bring the first non 0 to the left in
             bring_to_neighbour(row, col-1, ">", board, "col")
             # If the current value is the same as the neighour to the left, sum
-            if col > 1 and board[row][col - 1] == board[row][col] and board[row][col] != 0:
+            if col > 0 and board[row][col - 1] == board[row][col] and board[row][col] != 0:
                 board[row][col] = 2 * board[row][col]
                 board[row][col - 1] = 0
 
@@ -93,7 +93,7 @@ def handle_down(board):
             bring_to_current(row, col, ">", board, "row")
             bring_to_neighbour(row-1, col, ">", board, "row")
 
-            if row > 1 and board[row - 1][col] == board[row][col] and board[row][col] != 0:
+            if row > 0 and board[row - 1][col] == board[row][col] and board[row][col] != 0:
                 board[row][col] = 2 * board[row][col]
                 board[row - 1][col] = 0
     spawn(board)
