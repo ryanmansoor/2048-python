@@ -21,21 +21,12 @@ def get_row_col_from_orig(compare, col_orig, row_orig, i, op):
     interested = col if compare == "col" else row
     return row, col, interested
 
-def bring_to_current(row_orig, col_orig, op, board, compare):
-    border = 0 if op == ">" else 3
-    if board[row_orig][col_orig] == 0:
-        bring_closest_non_zero_in(row_orig, col_orig, op, board, compare, border)
-
-def bring_to_neighbour(row_orig, col_orig, op, board, compare):
-    border = 0 if op == ">" else 3
-    interested_orig = col_orig if compare == "col" else row_orig
-    if get_truth(interested_orig, op, border) and board[row_orig][col_orig] == 0:
-        bring_closest_non_zero_in(row_orig, col_orig, op, board, compare, border)
-
-def bring_closest_non_zero_in(row_orig, col_orig, op, board, compare, border):
+def bring_closest_non_zero_in(row_orig, col_orig, op, board, compare):
+    if board[row_orig][col_orig] != 0:
+        return
     i = 0
     row, col, interested = get_row_col_from_orig(compare, col_orig, row_orig, i, op)
-    while board[row][col] == 0 and get_truth(interested, op, border):
+    while board[row][col] == 0 and get_truth(interested, op, 0 if op == ">" else 3):
         i += 1
         row, col, interested = get_row_col_from_orig(compare, col_orig, row_orig, i, op)
 
@@ -67,11 +58,11 @@ def handle_right(board):
     for row in range(4):
         for col in reversed(range(4)):
             # If the current value is 0, bring the first non 0 to the left in
-            bring_to_current(row, col, ">", board, "col")
-            # If the neighour to the left is 0, bring the first non 0 to the left in
-            bring_to_neighbour(row, col-1, ">", board, "col")
-            # If the current value is the same as the neighour to the left, sum
+            bring_closest_non_zero_in(row, col, ">", board, "col")
             if col > 0:
+                # If the neighour to the left is 0, bring the first non 0 to the left in
+                bring_closest_non_zero_in(row, col-1, ">", board, "col")
+                # If the current value is the same as the neighour to the left, sum
                 sum_neighbours(board, row, col, row, col-1)
 
 
@@ -81,9 +72,9 @@ def handle_right(board):
 def handle_left(board):
     for row in range(4):
         for col in range(4):
-            bring_to_current(row, col, "<", board, "col")
-            bring_to_neighbour(row, col+1, "<", board, "col")
+            bring_closest_non_zero_in(row, col, "<", board, "col")
             if col < 3:
+                bring_closest_non_zero_in(row, col+1, "<", board, "col")
                 sum_neighbours(board, row, col, row, col+1)
 
     spawn(board)
@@ -92,9 +83,9 @@ def handle_left(board):
 def handle_down(board):
     for col in range(4):
         for row in reversed(range(4)):
-            bring_to_current(row, col, ">", board, "row")
-            bring_to_neighbour(row-1, col, ">", board, "row")
+            bring_closest_non_zero_in(row, col, ">", board, "row")
             if row > 0:
+                bring_closest_non_zero_in(row-1, col, ">", board, "row")
                 sum_neighbours(board, row, col, row-1, col)
 
     spawn(board)
@@ -103,9 +94,9 @@ def handle_down(board):
 def handle_up(board):
     for col in range(4):
         for row in range(4):
-            bring_to_current(row, col, "<", board, "row")
-            bring_to_neighbour(row+1, col, "<", board, "row")
+            bring_closest_non_zero_in(row, col, "<", board, "row")
             if row < 3:
+                bring_closest_non_zero_in(row+1, col, "<", board, "row")
                 sum_neighbours(board, row, col, row+1, col)
 
     spawn(board)
